@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAMASTE-ICD11 Integration API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .search-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .search-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-section h3::before {
+            content: '🔍';
+            margin-right: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.4);
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            min-height: 200px;
+        }
+        
+        .results h4 {
+            color: #28a745;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .results h4::before {
+            content: '✅';
+            margin-right: 10px;
+        }
+        
+        .code-result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        
+        .code-result:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .code-display {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .code-system {
+            background: #007bff;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        
+        .code-definition {
+            color: #6c757d;
+            margin-top: 8px;
+        }
+        
+        .mapping-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f4f8;
+            border-radius: 4px;
+            border-left: 3px solid #17a2b8;
+        }
+        
+        .mapping-info strong {
+            color: #17a2b8;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .tab-button {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .tab-button.active {
+            color: #007bff;
+            border-bottom-color: #007bff;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .col {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 NAMASTE-ICD11 Integration</h1>
+            <p>Traditional Medicine Terminology Mapping & Translation Service</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('search')">🔍 Search & Translate</button>
+                <button class="tab-button" onclick="showTab('conceptmap')">🗺️ ConceptMap</button>
+                <button class="tab-button" onclick="showTab('fhir')">📋 FHIR Bundle</button>
+            </div>
+            
+            <!-- Search Tab -->
+            <div id="search" class="tab-content active">
+                <div class="row">
+                    <div class="col">
+                        <div class="search-section">
+                            <h3>NAMASTE Search</h3>
+                            <div class="form-group">
+                                <label for="namasteSearch">Search NAMASTE Codes:</label>
+                                <input type="text" id="namasteSearch" placeholder="Enter search term (e.g., 'headache', 'indigestion')">
+                            </div>
+                            <div class="form-group">
+                                <label for="namasteSystem">System Filter:</label>
+                                <select id="namasteSystem">
+                                    <option value="">All Systems</option>
+                                    <option value="Ayurveda">Ayurveda</option>
+                                    <option value="Siddha">Siddha</option>
+                                    <option value="Unani">Unani</option>
+                                </select>
+                            </div>
+                            <button onclick="searchNamaste()">Search NAMASTE</button>
+                        </div>
+                    </div>
+                    
+                    <div class="col">
+                        <div class="search-section">
+                            <h3>ICD-11 Search</h3>
+                            <div class="form-group">
+                                <label for="icd11Search">Search ICD-11 Codes:</label>
+                                <input type="text" id="icd11Search" placeholder="Enter search term (e.g., 'headache', 'digestive')">
+                            </div>
+                            <div class="form-group">
+                                <label for="icd11System">System:</label>
+                                <select id="icd11System">
+                                    <option value="both">Both TM2 & Biomedicine</option>
+                                    <option value="tm2">Traditional Medicine (TM2)</option>
+                                    <option value="biomedicine">Biomedicine</option>
+                                </select>
+                            </div>
+                            <button onclick="searchICD11()">Search ICD-11</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="search-section">
+                    <h3>Code Translation</h3>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="sourceCode">Source Code:</label>
+                                <input type="text" id="sourceCode" placeholder="Enter code (e.g., NAM001, TM2.01)">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="sourceSystem">Source System:</label>
+                                <select id="sourceSystem">
+                                    <option value="http://terminology.mohayush.gov.in/namaste">NAMASTE</option>
+                                    <option value="http://id.who.int/icd/release/11/2023-01/tm2">ICD-11 TM2</option>
+                                    <option value="http://id.who.int/icd/release/11/2023-01/mms">ICD-11 Biomedicine</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="targetSystem">Target System:</label>
+                                <select id="targetSystem">
+                                    <option value="both">Both ICD-11 Systems</option>
+                                    <option value="tm2">ICD-11 TM2</option>
+                                    <option value="biomedicine">ICD-11 Biomedicine</option>
+                                    <option value="namaste">NAMASTE</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="translateCode()">Translate Code</button>
+                </div>
+            </div>
+            
+            <!-- ConceptMap Tab -->
+            <div id="conceptmap" class="tab-content">
+                <div class="search-section">
+                    <h3>FHIR ConceptMap</h3>
+                    <p>Generate and view FHIR ConceptMap resource showing mappings between NAMASTE and ICD-11 terminologies.</p>
+                    <button onclick="getConceptMap()">Generate ConceptMap</button>
+                </div>
+            </div>
+            
+            <!-- FHIR Bundle Tab -->
+            <div id="fhir" class="tab-content">
+                <div class="search-section">
+                    <h3>FHIR Bundle Upload</h3>
+                    <p>Upload a FHIR Bundle with dual-coded Condition resources (NAMASTE + ICD-11).</p>
+                    <div class="form-group">
+                        <label for="fhirBundle">FHIR Bundle JSON:</label>
+                        <textarea id="fhirBundle" rows="10" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-family: monospace;" placeholder='Paste FHIR Bundle JSON here...'></textarea>
+                    </div>
+                    <button onclick="uploadBundle()">Upload Bundle</button>
+                </div>
+            </div>
+            
+            <div id="results" class="results" style="display: none;">
+                <h4>Results</h4>
+                <div id="resultsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab and activate button
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Hide results when switching tabs
+            document.getElementById('results').style.display = 'none';
+        }
+        
+        function showResults(title, content) {
+            const resultsDiv = document.getElementById('results');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            resultsDiv.querySelector('h4').textContent = title;
+            resultsContent.innerHTML = content;
+            resultsDiv.style.display = 'block';
+        }
+        
+        function showError(message) {
+            showResults('❌ Error', `<div class="error">${message}</div>`);
+        }
+        
+        function showLoading() {
+            showResults('⏳ Loading...', '<div class="loading">Please wait...</div>');
+        }
+        
+        async function searchNamaste() {
+            const searchTerm = document.getElementById('namasteSearch').value.trim();
+            const system = document.getElementById('namasteSystem').value;
+            
+            if (!searchTerm) {
+                showError('Please enter a search term');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                let url = `${API_BASE}/api/namaste/search?q=${encodeURIComponent(searchTerm)}`;
+                if (system) url += `&system=${encodeURIComponent(system)}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.error) {
+                    showError(data.error);
+                    return;
+                }
+                
+                let content = '';
+                if (data.entry && data.entry.length > 0) {
+                    data.entry.forEach(entry => {
+                        const resource = entry.resource;
+                        content += `
+                            <div class="code-result">
+                                <div class="code-header">
+                                    <span class="code-display">${resource.display}</span>
+                                    <span class="code-system">${resource.system}</span>
+                                </div>
+                                <div><strong>Code:</strong> ${resource.code}</div>
+                                <div class="code-definition">${resource.definition}</div>
+                                <div><strong>Category:</strong> ${resource.category}</div>
+                                <div><strong>Body System:</strong> ${resource.bodySystem}</div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    content = '<div class="loading">No results found.</div>';
+                }
+                
+                showResults(`🔍 NAMASTE Search Results (${data.total || 0} found)`, content);
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        }
+        
+        async function searchICD11() {
+            const searchTerm = document.getElementById('icd11Search').value.trim();
+            const system = document.getElementById('icd11System').value;
+            
+            if (!searchTerm) {
+                showError('Please enter a search term');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const url = `${API_BASE}/api/icd11/search?q=${encodeURIComponent(searchTerm)}&system=${system}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.error) {
+                    showError(data.error);
+                    return;
+                }
+                
+                let content = '';
+                if (data.entry && data.entry.length > 0) {
+                    data.entry.forEach(entry => {
+                        const resource = entry.resource;
+                        content += `
+                            <div class="code-result">
+                                <div class="code-header">
+                                    <span class="code-display">${resource.display}</span>
+                                    <span class="code-system">${resource.systemName}</span>
+                                </div>
+                                <div><strong>Code:</strong> ${resource.code}</div>
+                                <div class="code-definition">${resource.definition}</div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    content = '<div class="loading">No results found.</div>';
+                }
+                
+                showResults(`🔍 ICD-11 Search Results (${data.total || 0} found)`, content);
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        }
+        
+        async function translateCode() {
+            const code = document.getElementById('sourceCode').value.trim();
+            const system = document.getElementById('sourceSystem').value;
+            const target = document.getElementById('targetSystem').value;
+            
+            if (!code || !system) {
+                showError('Please enter both code and source system');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const url = `${API_BASE}/api/translate?system=${encodeURIComponent(system)}&code=${encodeURIComponent(code)}&target=${target}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.parameter) {
+                    const resultParam = data.parameter.find(p => p.name === 'result');
+                    const hasMatches = resultParam && resultParam.valueBoolean;
+                    
+                    let content = '';
+                    if (hasMatches) {
+                        const matches = data.parameter.filter(p => p.name === 'match');
+                        matches.forEach(match => {
+                            const concept = match.part.find(p => p.name === 'concept')?.valueCoding;
+                            const equivalence = match.part.find(p => p.name === 'equivalence')?.valueCode;
+                            const confidence = match.part.find(p => p.name === 'confidence')?.valueDecimal;
+                            const method = match.part.find(p => p.name === 'method')?.valueString;
+                            
+                            content += `
+                                <div class="code-result">
+                                    <div class="code-header">
+                                        <span class="code-display">${concept.display}</span>
+                                        <span class="code-system">${concept.system.includes('tm2') ? 'ICD-11 TM2' : concept.system.includes('mms') ? 'ICD-11 Bio' : 'NAMASTE'}</span>
+                                    </div>
+                                    <div><strong>Code:</strong> ${concept.code}</div>
+                                    <div class="mapping-info">
+                                        <div><strong>Equivalence:</strong> ${equivalence}</div>
+                                        ${confidence ? `<div><strong>Confidence:</strong> ${(confidence * 100).toFixed(1)}%</div>` : ''}
+                                        ${method ? `<div><strong>Method:</strong> ${method}</div>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        const messageParam = data.parameter.find(p => p.name === 'message');
+                        content = `<div class="loading">${messageParam ? messageParam.valueString : 'No translations found.'}</div>`;
+                    }
+                    
+                    showResults('🔄 Translation Results', content);
+                } else {
+                    showError('Invalid response format');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        }
+        
+        async function getConceptMap() {
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/conceptmap`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    showError(data.error);
+                    return;
+                }
+                
+                let content = `
+                    <div class="code-result">
+                        <h4>ConceptMap Information</h4>
+                        <div><strong>Name:</strong> ${data.name}</div>
+                        <div><strong>Title:</strong> ${data.title}</div>
+                        <div><strong>Version:</strong> ${data.version}</div>
+                        <div><strong>Status:</strong> ${data.status}</div>
+                        <div><strong>Publisher:</strong> ${data.publisher}</div>
+                        <div class="code-definition">${data.description}</div>
+                    </div>
+                `;
+                
+                if (data.group) {
+                    data.group.forEach((group, index) => {
+                        const systemName = group.target.includes('tm2') ? 'TM2' : 'Biomedicine';
+                        content += `
+                            <div class="code-result">
+                                <h4>Group ${index + 1}: NAMASTE → ICD-11 ${systemName}</h4>
+                                <div><strong>Source:</strong> ${group.source}</div>
+                                <div><strong>Target:</strong> ${group.target}</div>
+                                <div><strong>Mappings:</strong> ${group.element.length}</div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                content += `
+                    <div class="code-result">
+                        <h4>Raw JSON</h4>
+                        <pre style="background: #f8f9fa; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 12px;">${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+                
+                showResults('🗺️ FHIR ConceptMap', content);
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        }
+        
+        async function uploadBundle() {
+            const bundleText = document.getElementById('fhirBundle').value.trim();
+            
+            if (!bundleText) {
+                showError('Please enter FHIR Bundle JSON');
+                return;
+            }
+            
+            let bundleData;
+            try {
+                bundleData = JSON.parse(bundleText);
+            } catch (error) {
+                showError('Invalid JSON format: ' + error.message);
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/bundle`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bundleData)
+                });
+                
+                const data = await response.json();
+                
+                let content = `
+                    <div class="code-result">
+                        <h4>Upload Response</h4>
+                        <div><strong>Status:</strong> ${response.status} ${response.statusText}</div>
+                        <div><strong>Bundle Type:</strong> ${data.type}</div>
+                        <div><strong>Entries Processed:</strong> ${data.entry ? data.entry.length : 0}</div>
+                    </div>
+                `;
+                
+                if (data.entry) {
+                    data.entry.forEach((entry, index) => {
+                        const resource = entry.resource;
+                        if (resource.resourceType === 'OperationOutcome') {
+                            content += `
+                                <div class="code-result">
+                                    <h4>⚠️ Validation Issues</h4>
+                                    ${resource.issue.map(issue => `<div class="mapping-info">${issue.details.text}</div>`).join('')}
+                                </div>
+                            `;
+                        } else if (entry.response) {
+                            content += `
+                                <div class="code-result">
+                                    <div class="code-header">
+                                        <span class="code-display">${resource.resourceType} ${resource.id}</span>
+                                        <span class="code-system">${entry.response.status}</span>
+                                    </div>
+                                    <div><strong>Location:</strong> ${entry.response.location}</div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                
+                showResults('📋 FHIR Bundle Upload Result', content);
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        }
+        
+        // Add sample FHIR Bundle
+        document.addEventListener('DOMContentLoaded', function() {
+            const sampleBundle = {
+                "resourceType": "Bundle",
+                "type": "transaction",
+                "entry": [
+                    {
+                        "fullUrl": "urn:uuid:condition-1",
+                        "resource": {
+                            "resourceType": "Condition",
+                            "id": "condition-1",
+                            "subject": {
+                                "reference": "Patient/patient-1"
+                            },
+                            "code": {
+                                "coding": [
+                                    {
+                                        "system": "http://terminology.mohayush.gov.in/namaste",
+                                        "code": "NAM006",
+                                        "display": "Shirahshula (Headache)"
+                                    },
+                                    {
+                                        "system": "http://id.who.int/icd/release/11/2023-01/mms",
+                                        "code": "G44.2",
+                                        "display": "Tension-type headache"
+                                    }
+                                ],
+                                "text": "Traditional headache with biomedical correlation"
+                            },
+                            "clinicalStatus": {
+                                "coding": [
+                                    {
+                                        "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                                        "code": "active"
+                                    }
+                                ]
+                            }
+                        },
+                        "request": {
+                            "method": "POST",
+                            "url": "Condition"
+                        }
+                    }
+                ]
+            };
+            
+            document.getElementById('fhirBundle').value = JSON.stringify(sampleBundle, null, 2);
+        });
+    </script>
+</body>
+</html>

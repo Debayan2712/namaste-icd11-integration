@@ -1,0 +1,32 @@
+# Core Flask and API dependencies
+Flask==2.3.3
+Flask-RESTful==0.3.10
+Flask-CORS==4.0.0
+Flask-JWT-Extended==4.5.3
+
+# FHIR and healthcare standards
+fhir.resources==7.0.2
+pydantic==2.4.2
+
+# Database and caching
+SQLAlchemy==2.0.23
+Flask-SQLAlchemy==3.1.1
+
+# HTTP requests and API integration
+requests==2.31.0
+httpx==0.25.1
+
+# CSV processing and data manipulation - simplified to avoid compilation issues
+pandas
+numpy
+
+# Authentication and security
+PyJWT==2.8.0
+cryptography
+python-dotenv==1.0.0
+
+# Logging and monitoring
+structlog==23.2.0
+
+# Utilities
+python-dateutil==2.8.2
