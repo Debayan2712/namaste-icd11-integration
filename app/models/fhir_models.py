@@ -273,5 +273,4 @@ class FHIRCondition(BaseModel):
         }
 
 
-# Update forward references
-CodeSystemConcept.model_rebuild()
+# Update forward references - not needed in Pydantic v1

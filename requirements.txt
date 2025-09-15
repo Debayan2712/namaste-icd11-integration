@@ -6,7 +6,7 @@ Flask-JWT-Extended==4.5.3
 
 # FHIR and healthcare standards
 fhir.resources==7.0.2
-pydantic==2.4.2
+pydantic>=1.7.2,<2.0.0
 
 # Database and caching
 SQLAlchemy==2.0.23
@@ -30,3 +30,6 @@ structlog==23.2.0
 
 # Utilities
 python-dateutil==2.8.2
+
+# Production WSGI server
+gunicorn

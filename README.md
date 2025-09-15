@@ -338,6 +338,23 @@ pytest --cov=app --cov-report=html
 
 ## 🏥 Production Deployment
 
+### ✅ Free Hosting (Render/Railway)
+
+Deploy for free on Render or Railway. This repo already includes a `Procfile` and uses `gunicorn`.
+
+1. Push this repo to GitHub.
+2. Create a new Web Service:
+   - Render: New → Web Service → Connect repo
+   - Railway: New Project → Deploy from GitHub
+3. Configure build/run:
+   - Build: `pip install -r requirements.txt`
+   - Start: `gunicorn app:create_app()`
+4. Set environment variables:
+   - `FLASK_ENV=production`
+   - `SECRET_KEY=<long-random-string>`
+   - Optional: `WHO_CLIENT_ID`, `WHO_CLIENT_SECRET`
+5. Deploy. The platform assigns a public URL. Services may sleep on free tier.
+
 ### **Docker Deployment**
 
 ```dockerfile
